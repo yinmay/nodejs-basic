@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-deepseek-api",
+  "version": "1.0.0",
+  "description": "Node.js 调用 DeepSeek API 的示例项目",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "stream": "node --env-file=.env src/stream-demo.js",
+    "reason": "node --env-file=.env src/reason-demo.js"
+  },
+  "keywords": [
+    "deepseek",
+    "api",
+    "stream",
+    "openai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^4.71.0"
+  }
+}
