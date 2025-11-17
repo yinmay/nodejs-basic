@@ -1,73 +1,90 @@
-# Node.js 调用 DeepSeek API 示例
+# Node.js DeepSeek API Demo
 
-这是一个使用 Node.js 和 OpenAI SDK 调用 DeepSeek API 的示例项目，演示了如何实现流式输出。
+A Node.js demo project using OpenAI SDK to call DeepSeek API with streaming support.
 
-## 技术栈
+## Tech Stack
 
 - **Node.js**: v22+
-- **模块系统**: ES Module
-- **依赖**: openai (^4.71.0)
+- **Module System**: ES Module
+- **Dependencies**: openai (^4.71.0)
 
-## 快速开始
+## Quick Start
 
-### 1. 安装依赖
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. 配置 API Key
+### 2. Configure API Key
 
-复制 `.env.example` 文件为 `.env`，并填入你的 DeepSeek API Key:
+Copy `.env.example` to `.env` and fill in your DeepSeek API Key:
 
 ```bash
 cp .env.example .env
 ```
 
-编辑 `.env` 文件:
+Edit `.env` file:
 
 ```env
 DEEPSEEK_API_KEY=your_actual_api_key_here
 ```
 
-> 你可以从 [DeepSeek Platform](https://platform.deepseek.com/) 获取 API Key
+> Get your API Key from [DeepSeek Platform](https://platform.deepseek.com/)
 
-### 3. 运行示例
+### 3. Run Examples
 
 ```bash
-# 运行主程序
-npm start
+# Run streaming demo
+npm run stream
 
-# 或直接运行 stream-demo
-npm run demo
+# Run reasoning demo
+npm run reason
 
-# 或使用环境变量直接运行
-DEEPSEEK_API_KEY=your_key node src/stream-demo.js
+# Run HTTP server with chat UI
+npm run server
+# Then visit http://localhost:3000/chat
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 .
 ├── src/
-│   ├── index.js          # 主入口文件
-│   └── stream-demo.js    # 流式输出示例
-├── .env.example          # 环境变量示例文件
+│   ├── index.js          # Main entry file
+│   ├── stream-demo.js    # Streaming output demo
+│   ├── reason-demo.js    # Reasoning model demo
+│   ├── server.js         # HTTP server with SSE
+│   ├── chat.html         # Chat UI (Material Design)
+│   └── test-client.js    # Test client
+├── .env.example          # Environment variables example
 ├── .gitignore
 ├── package.json
-├── CLAUDE.md             # Claude Code 项目说明
+├── CLAUDE.md             # Claude Code project instructions
 └── README.md
 ```
 
-## 功能特性
+## Features
 
-- ✅ 使用 OpenAI SDK 调用 DeepSeek API
-- ✅ 实现流式输出（stream）
-- ✅ ES Module 语法
-- ✅ 环境变量管理
-- ✅ 错误处理
+- ✅ Call DeepSeek API using OpenAI SDK
+- ✅ Streaming output (SSE protocol)
+- ✅ DeepSeek Reasoner model support
+- ✅ HTTP server with native Node.js
+- ✅ Material Design chat UI
+- ✅ ES Module syntax
+- ✅ Environment variable management
+- ✅ Error handling
 
-## 代码示例
+## API Endpoints
+
+- **GET /** - Service information
+- **GET /chat** - Chat UI page
+- **GET /health** - Health check
+- **POST /api/chat** - Chat endpoint (SSE streaming)
+
+## Code Example
+
+### Basic Streaming
 
 ```javascript
 import OpenAI from 'openai';
@@ -79,7 +96,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: 'deepseek-chat',
-  messages: [{ role: 'user', content: '你好' }],
+  messages: [{ role: 'user', content: 'Hello' }],
   stream: true
 });
 
@@ -89,11 +106,33 @@ for await (const chunk of stream) {
 }
 ```
 
-## 注意事项
+### SSE Server
 
-- 项目使用 ES Module，需要 Node.js v22+
-- 不使用任何 Web 框架（如 Express、Koa 等），仅使用 Node.js 原生 API 和 OpenAI SDK
-- DeepSeek API 与 OpenAI API 完全兼容，因此可以使用 OpenAI SDK
+```javascript
+// Request DeepSeek API
+const stream = await client.chat.completions.create({
+  model: 'deepseek-chat',
+  messages: [{ role: 'user', content: message }],
+  stream: true
+});
+
+// Return streaming data using SSE protocol
+for await (const chunk of stream) {
+  const content = chunk.choices[0]?.delta?.content || '';
+  if (content) {
+    res.write(`data: ${JSON.stringify({ content })}\n\n`);
+  }
+}
+
+res.write('data: [DONE]\n\n');
+res.end();
+```
+
+## Notes
+
+- This project uses ES Modules, requires Node.js v22+
+- No web frameworks (Express, Koa, etc.), only native Node.js APIs and OpenAI SDK
+- DeepSeek API is fully compatible with OpenAI API
 
 ## License
 
