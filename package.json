@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --env-file=.env src/index.js",
     "stream": "node --env-file=.env src/stream-demo.js",
-    "reason": "node --env-file=.env src/reason-demo.js"
+    "reason": "node --env-file=.env src/reason-demo.js",
+    "server": "node --env-file=.env src/server.js"
   },
   "keywords": [
     "deepseek",
